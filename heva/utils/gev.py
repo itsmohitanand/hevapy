@@ -1,10 +1,11 @@
 import numpy as np
 from typing import Tuple, List
-from math import comb
-from scipy.special import gamma
 from heva.utils.dist import _Distribution
 from heva.utils.helper import _convert_np
+import scipy.optimize
 import matplotlib.pylab as plt
+from numdifftools import Hessian
+from scipy import linalg
 
 
 class GEV(_Distribution):
@@ -12,7 +13,19 @@ class GEV(_Distribution):
     GEV class inherits from a _Distribution class and implements methods like loc, scale, shape, cdf and pdf.
     """
 
-    __slots__ = "mu", "mu_p", "sigma", "xi", "cov", "covariate", "unit", "time_scale"
+    __slots__ = (
+        "mu",
+        "mu_p",
+        "sigma",
+        "xi",
+        "cov",
+        "covariate",
+        "unit",
+        "time_scale",
+        "mu_p",
+        "sigma_p",
+        "xi_p",
+    )
 
     def __init__(
         self, mu_p, sigma_p, xi_p, cov, covariate=1, unit=None, time_scale=None
@@ -152,23 +165,26 @@ class GEVfit(object):
     __slots__ = (
         "max_arr",
         "covariate",
-        "mu",
-        "sigma",
-        "xi",
+        "nmu_cov",
+        "nsigma_cov",
+        "nxi_cov",
         "mu_init",
         "sigma_init",
         "xi_init",
         "method",
         "max_it",
+        "mu_p",
+        "sigma_p",
+        "xi_p",
     )
 
     def __init__(
         self,
         max_arr,
         covariate=None,
-        mu_c=0,
-        sigma_c=0,
-        xi_c=0,
+        nmu_cov=0,
+        nsigma_cov=0,
+        nxi_cov=0,
         mu_init=None,
         sigma_init=None,
         xi_init=None,
@@ -178,3 +194,102 @@ class GEVfit(object):
 
         self.max_arr = max_arr
         self.covariate = covariate
+        self.nmu_cov = nmu_cov
+        self.nsigma_cov = nsigma_cov
+        self.nxi_cov = nxi_cov
+        self.mu_init = mu_init
+        self.sigma_init = sigma_init
+        self.xi_init = xi_init
+        self.method = method
+        self.max_it = max_it
+
+    def fit(self):
+        parameter = self._generate_parameter()
+        options = {"maxiter": 10000}
+        minimized_nll = scipy.optimize.minimize(
+            fun=self.nll, x0=parameter, method="nelder-mead", hess=True, options=options
+        )
+        print(minimized_nll.x)
+
+        hess = Hessian(self.nll, method="complex")
+
+        hess_matrix = hess(minimized_nll.x)
+        print(linalg.inv(hess_matrix))
+
+    def nll(self, parameters):
+
+        mu_ind = self._param_index("mu")
+        sigma_ind = self._param_index("sigma")
+        xi_ind = self._param_index("xi")
+
+        mu_p = parameters[mu_ind]
+        sigma_p = parameters[sigma_ind]
+        xi_p = parameters[xi_ind]
+
+        mu = self._compute_variable(mu_p)
+        sigma = self._compute_variable(sigma_p)
+        xi = self._compute_variable(xi_p)
+
+        x = self.max_arr
+        n = x.shape[0]
+
+        ll_1 = -n * np.log(sigma)
+
+        y = 1 + xi * (x - mu) / sigma
+
+        ll_2 = -(1 + 1 / xi) * np.sum(np.log(y))
+
+        ll_3 = -np.sum(np.power(y, -1.0 / xi))
+
+        ll = ll_1 + ll_2 + ll_3
+        # print(f"This is ll {ll}")
+        return -ll
+
+    def _generate_parameter(self):
+
+        init_1 = np.sqrt(6 * np.var(self.max_arr)) / np.pi
+        init_2 = np.mean(self.max_arr) - 0.57722 * init_1
+
+        param_mu = (1 + self.nmu_cov) * [1]
+        param_mu[0] = init_1
+
+        param_sigma = (1 + self.nsigma_cov) * [1]
+        param_sigma[0] = init_2
+        param_xi = [0.1]
+
+        param = param_mu + param_sigma + param_xi
+
+        return np.array(param)
+
+    def _compute_variable(self, param):
+
+        var = param
+        n_cov = param.shape[0]
+        t_step = self.covariate.shape[0]
+
+        if n_cov > 1:
+
+            param_mat = np.repeat(param.reshape(param.shape[0], 1), t_step, axis=1)
+            param_mat = param_mat.reshape(t_step, param.shape[0])
+            var_mat = (
+                param_mat[:, 0].reshape(t_step, 1)
+                + param_mat[:, 1:] * self.covariate[:, :n_cov]
+            )
+            var = np.sum(var_mat, axis=1)
+            var = var.reshape(t_step, 1)
+
+        return var
+
+    def _param_index(self, param_str):
+
+        if param_str == "mu":
+            strt_ind = 0
+            end_ind = self.nmu_cov + 1
+        elif param_str == "sigma":
+            strt_ind = self.nmu_cov + 1
+            end_ind = strt_ind + self.nsigma_cov + 1
+        elif param_str == "xi":
+            strt_ind = self.nmu_cov + self.nsigma_cov + 2
+            end_ind = strt_ind + self.nxi_cov + 1
+        index_list = [x for x in range(strt_ind, end_ind)]
+        return index_list

@@ -11,7 +11,7 @@ category = "dev"
 description = "An abstract syntax tree for Python with inference support."
 name = "astroid"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.5"
 version = "2.4.1"
 
 [package.dependencies]
@@ -186,6 +186,17 @@ name = "nodeenv"
 optional = false
 python-versions = "*"
 version = "1.4.0"
+
+[[package]]
+category = "main"
+description = "Solves automatic numerical differentiation problems in one or more variables."
+name = "numdifftools"
+optional = false
+python-versions = "*"
+version = "0.9.39"
+
+[package.extras]
+build_sphinx = ["sphinx (>=1.3.1)"]
 
 [[package]]
 category = "main"
@@ -389,7 +400,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "9883468ae0cbea7deb5444cb1a1dcabdf02a940aa3376615fd423680340b2a6a"
+content-hash = "3da45ce506ffa7a15ac8bb4e9c015e0de1560c1f8001abfd398ab717a0795bc2"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -506,6 +517,10 @@ more-itertools = [
 ]
 nodeenv = [
     {file = "nodeenv-1.4.0-py2.py3-none-any.whl", hash = "sha256:4b0b77afa3ba9b54f4b6396e60b0c83f59eaeb2d63dc3cc7a70f7f4af96c82bc"},
+]
+numdifftools = [
+    {file = "numdifftools-0.9.39-py2.py3-none-any.whl", hash = "sha256:e3a1912a6e4d0fd655d4e2683245c385fa4a021be387781a44bc2b8c7ca60b41"},
+    {file = "numdifftools-0.9.39.tar.gz", hash = "sha256:227c75c53665997c46ca44f6eb848c66acfde33bf483c6a6ef0b1faeef4434ac"},
 ]
 numpy = [
     {file = "numpy-1.18.5-cp35-cp35m-macosx_10_9_intel.whl", hash = "sha256:e91d31b34fc7c2c8f756b4e902f901f856ae53a93399368d9a0dc7be17ed2ca0"},
