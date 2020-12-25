@@ -4,22 +4,21 @@ from heva.utils.dist import _Distribution
 from heva.utils.helper import _convert_np
 import scipy.optimize
 import matplotlib.pylab as plt
-from numdifftools import Hessian
+# from numdifftools import Hessian
 from scipy import linalg
 
 
-class GEV(_Distribution):
+class GEVDist(_Distribution):
     """
     GEV class inherits from a _Distribution class and implements methods like loc, scale, shape, cdf and pdf.
     """
 
     __slots__ = (
         "mu",
-        "mu_p",
         "sigma",
         "xi",
         "cov",
-        "covariate",
+        "mu_cov",
         "unit",
         "time_scale",
         "mu_p",
@@ -28,7 +27,7 @@ class GEV(_Distribution):
     )
 
     def __init__(
-        self, mu_p, sigma_p, xi_p, cov, covariate=1, unit=None, time_scale=None
+        self, mu_p, sigma_p, xi_p, cov, mu_cov=1, unit=None, time_scale=None
     ):
         """
         mu, sigma and xi parameters are used to initialise a GEV Distribution
@@ -40,11 +39,11 @@ class GEV(_Distribution):
             cov (numpy.array) : Covriance Matrix of the parameters
         """
         self.mu_p = mu_p
-        self.mu = self._compute_parameter(mu_p, covariate)
-        self.sigma = self._compute_parameter(sigma_p, covariate)
-        self.xi = self._compute_parameter(xi_p, covariate)
+        self.mu = self._compute_parameter(mu_p, cov)
+        self.sigma = self._compute_parameter(sigma_p, cov)
+        self.xi = self._compute_parameter(xi_p, cov)
         self.cov = cov
-        self.covariate = covariate
+        self.cov = cov
         self.unit = unit
         self.time_scale = time_scale
 
@@ -160,7 +159,7 @@ class GEV(_Distribution):
         return para
 
 
-class GEVfit(object):
+class GEV(object):
 
     __slots__ = (
         "max_arr",
@@ -176,6 +175,7 @@ class GEVfit(object):
         "mu_p",
         "sigma_p",
         "xi_p",
+        'dist',
     )
 
     def __init__(
@@ -211,10 +211,22 @@ class GEVfit(object):
         )
         print(minimized_nll.x)
 
-        hess = Hessian(self.nll, method="complex")
+        strt_mu = 0
+        end_mu = strt_mu + 1 + self.nmu_cov
+        strt_sig = end_mu
+        end_sig = strt_sig+1+self.nsigma_cov
+        strt_xi = end_sig
+        end_xi = strt_xi+1+self.nxi_cov
 
-        hess_matrix = hess(minimized_nll.x)
-        print(linalg.inv(hess_matrix))
+        self.mu_p = minimized_nll.x[strt_mu:end_mu]
+        self.sigma_p = minimized_nll.x[strt_sig:end_sig]   
+        self.xi_p = minimized_nll.x[strt_xi:end_xi]   
+
+        self.dist = GEVDist(self.mu_p, self.sigma_p, self.xi_p, self.covariate, self.nmu_cov)
+        # hess = Hessian(self.nll, method="complex")
+
+        # hess_matrix = hess(minimized_nll.x)
+        # print(linalg.inv(hess_matrix))
 
     def nll(self, parameters):
 
@@ -225,7 +237,7 @@ class GEVfit(object):
         mu_p = parameters[mu_ind]
         sigma_p = parameters[sigma_ind]
         xi_p = parameters[xi_ind]
-
+        
         mu = self._compute_variable(mu_p)
         sigma = self._compute_variable(sigma_p)
         xi = self._compute_variable(xi_p)
@@ -242,7 +254,6 @@ class GEVfit(object):
         ll_3 = -np.sum(np.power(y, -1.0 / xi))
 
         ll = ll_1 + ll_2 + ll_3
-        # print(f"This is ll {ll}")
         return -ll
 
     def _generate_parameter(self):
@@ -250,7 +261,8 @@ class GEVfit(object):
         init_1 = np.sqrt(6 * np.var(self.max_arr)) / np.pi
         init_2 = np.mean(self.max_arr) - 0.57722 * init_1
 
-        param_mu = (1 + self.nmu_cov) * [1]
+        # We just initialise bias with init_1 and other values are
+        param_mu = (1 + self.nmu_cov) * [0]
         param_mu[0] = init_1
 
         param_sigma = (1 + self.nsigma_cov) * [1]
@@ -269,14 +281,14 @@ class GEVfit(object):
 
         if n_cov > 1:
 
-            param_mat = np.repeat(param.reshape(param.shape[0], 1), t_step, axis=1)
-            param_mat = param_mat.reshape(t_step, param.shape[0])
-            var_mat = (
-                param_mat[:, 0].reshape(t_step, 1)
-                + param_mat[:, 1:] * self.covariate[:, :n_cov]
-            )
-            var = np.sum(var_mat, axis=1)
-            var = var.reshape(t_step, 1)
+            param_mat = np.tile(param, (t_step,1))
+            bias = param_mat[:, 0].reshape(t_step, 1)
+            weights = param_mat[:, 1:].reshape(t_step,n_cov-1)
+
+
+
+            var_mat = bias + weights*self.covariate[:, 0:n_cov-1]
+            var = var_mat.reshape(t_step, 1)
 
         return var
 
@@ -292,4 +304,5 @@ class GEVfit(object):
             strt_ind = self.nmu_cov + self.nsigma_cov + 2
             end_ind = strt_ind + self.nxi_cov + 1
         index_list = [x for x in range(strt_ind, end_ind)]
+
         return index_list
