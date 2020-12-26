@@ -24,3 +24,7 @@ Some plots for fun.
 
 ### Some Todo's in terms of the figure 
 
+- [ ]  Figure 1: Data completeness in every year
+- [ ]  Figure 2: Time-series plot, 20 year return level plot, composite 6 sites
+- [ ]  Figure 3: Composite world map, 50yr return level in start and end year
+- [ ]  Figure 4: Composite world map, magnitude of event for 50 year return level event in start year, evaluate the the new return level (end year) of the same event, A map for change in years for return levels

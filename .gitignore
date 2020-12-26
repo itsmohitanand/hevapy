@@ -138,3 +138,8 @@ __pycache__
 ## Remove plots
 
 plots
+
+## Remove .DS_Store
+
+/DS_Store
+DS_Store/
