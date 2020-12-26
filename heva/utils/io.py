@@ -6,22 +6,24 @@ import os
 
 
 def read_ghcn(file_path: str, var: str = "PRCP") -> np.ndarray:
-    """
-    Read the data for a given station in GHCN format, provided the file path and the variable. The five core elements as variables are:
+    """Reads the data from ghcn.dly files
     PRCP = Precipitation (tenths of mm)
     SNOW = Snowfall (mm)
     SNWD = Snow depth (mm)
     TMAX = Maximum temperature (tenths of degrees C)
     TMIN = Minimum temperature (tenths of degrees C)
 
-
     Args:
-        file_path (str) : The path of a particular GHCN file
-        var (str) : Variable whose series is to be extracted
+        file_path (str): Path of the GHCN file
+        var (str, optional): Variable whose series is to be extracted. Defaults to "PRCP".
 
     Returns:
-        np.ndarray : A numpy array of having shape (num_days, 2)
+        np.ndarray: A numpy array of having shape (num_days, 2)
+
+    To-Do:
+        Reading variables other than PRCP to be implemented
     """
+
     data = []
     date_time = []
     with open(file_path) as f:

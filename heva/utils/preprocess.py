@@ -1,17 +1,18 @@
-from typing import List, Tuple
+from typing import List
 import numpy as np
 
 
-def yearly_max(data: np.ndarray) -> Tuple:
-    """
-    A valid year is one with atleast 330 days of data.
+def yearly_max(data: np.ndarray, frac: float = 0.9) -> np.ndarray:
+    """Computes yearly max for valid years
 
     Args:
-        data (np.ndarray) : A numpy array of two columns, first with datetime and second with corresponding value
+        data (np.ndarray): 2-D array conntaining datetime and value
+        frac (float, optional): The minimum fraction of days required for a year to be valid. Defaults to 0.9.
 
     Returns:
-        Tuple : A tuple of two lists containing years and corresponding max_value
+        np.ndarray: 2-D array with year and the max_val
     """
+
     years = []
     values = []
     max_val = []
@@ -23,12 +24,12 @@ def yearly_max(data: np.ndarray) -> Tuple:
         if _day_last(data[i, 0]):
             num_valid_data = _count_data(values)
 
-            if num_valid_data > 330:
+            if num_valid_data > 365 * frac:
                 years.append(data[i, 0].year)
                 max_val.append(max(values))
 
             values = []
-    return (years, max_val)
+    return np.array([years, max_val]).T
 
 
 def _day_first(x):

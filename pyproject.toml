@@ -1,21 +1,3 @@
-[tool.poetry]
-name = "heva-py"
-version = "0.1.0"
-description = ""
-authors = ["Mohit Anand <you@example.com>"]
-
-[tool.poetry.dependencies]
-python = "^3.8"
-numpy = "^1.18.5"
-matplotlib = "^3.2.1"
-cartopy = "^0.18.0"
-scipy = "^1.4.1"
-pre-commit = "^2.4.0"
-numdifftools = "^0.9.39"
-
-[tool.poetry.dev-dependencies]
-pytest = "^5.2"
-pylint = "^2.5.2"
 
 [tool.black]
     py38 = true
@@ -37,7 +19,3 @@ pylint = "^2.5.2"
       | tests/data
     )/
     '''
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-

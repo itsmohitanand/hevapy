@@ -1,0 +1,4 @@
+include data/ghcnd-inventory.txt
+include data/sample_data/ASN00023000.dly
+include data/sample_data/NLE00100499.dly
+include data/sample_data/UK000056225.dly

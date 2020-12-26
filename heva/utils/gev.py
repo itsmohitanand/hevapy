@@ -4,6 +4,7 @@ from heva.utils.dist import _Distribution
 from heva.utils.helper import _convert_np
 import scipy.optimize
 import matplotlib.pylab as plt
+
 # from numdifftools import Hessian
 from scipy import linalg
 
@@ -26,9 +27,7 @@ class GEVDist(_Distribution):
         "xi_p",
     )
 
-    def __init__(
-        self, mu_p, sigma_p, xi_p, cov, mu_cov=1, unit=None, time_scale=None
-    ):
+    def __init__(self, mu_p, sigma_p, xi_p, cov, mu_cov=1, unit=None, time_scale=None):
         """
         mu, sigma and xi parameters are used to initialise a GEV Distribution
 
@@ -175,7 +174,7 @@ class GEV(object):
         "mu_p",
         "sigma_p",
         "xi_p",
-        'dist',
+        "dist",
     )
 
     def __init__(
@@ -214,15 +213,17 @@ class GEV(object):
         strt_mu = 0
         end_mu = strt_mu + 1 + self.nmu_cov
         strt_sig = end_mu
-        end_sig = strt_sig+1+self.nsigma_cov
+        end_sig = strt_sig + 1 + self.nsigma_cov
         strt_xi = end_sig
-        end_xi = strt_xi+1+self.nxi_cov
+        end_xi = strt_xi + 1 + self.nxi_cov
 
         self.mu_p = minimized_nll.x[strt_mu:end_mu]
-        self.sigma_p = minimized_nll.x[strt_sig:end_sig]   
-        self.xi_p = minimized_nll.x[strt_xi:end_xi]   
+        self.sigma_p = minimized_nll.x[strt_sig:end_sig]
+        self.xi_p = minimized_nll.x[strt_xi:end_xi]
 
-        self.dist = GEVDist(self.mu_p, self.sigma_p, self.xi_p, self.covariate, self.nmu_cov)
+        self.dist = GEVDist(
+            self.mu_p, self.sigma_p, self.xi_p, self.covariate, self.nmu_cov
+        )
         # hess = Hessian(self.nll, method="complex")
 
         # hess_matrix = hess(minimized_nll.x)
@@ -237,7 +238,7 @@ class GEV(object):
         mu_p = parameters[mu_ind]
         sigma_p = parameters[sigma_ind]
         xi_p = parameters[xi_ind]
-        
+
         mu = self._compute_variable(mu_p)
         sigma = self._compute_variable(sigma_p)
         xi = self._compute_variable(xi_p)
@@ -281,13 +282,11 @@ class GEV(object):
 
         if n_cov > 1:
 
-            param_mat = np.tile(param, (t_step,1))
+            param_mat = np.tile(param, (t_step, 1))
             bias = param_mat[:, 0].reshape(t_step, 1)
-            weights = param_mat[:, 1:].reshape(t_step,n_cov-1)
+            weights = param_mat[:, 1:].reshape(t_step, n_cov - 1)
 
-
-
-            var_mat = bias + weights*self.covariate[:, 0:n_cov-1]
+            var_mat = bias + weights * self.covariate[:, 0 : n_cov - 1]
             var = var_mat.reshape(t_step, 1)
 
         return var

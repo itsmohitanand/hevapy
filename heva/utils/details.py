@@ -47,7 +47,9 @@ def ghcn_key_map():
     return c_key_map
 
 
-def ghcn_record(t_year: int = 170, till_year=2015, var: str = "PRCP") -> set:
+def ghcn_record(
+    t_year: int = 75, till_year=2015, from_year=1900, var: str = "PRCP"
+) -> dict:
     """
     Provides the station name with the length of record greater than a threshold, given for a variable. The five core elements as variables are:
     PRCP = Precipitation (tenths of mm)
@@ -67,11 +69,11 @@ def ghcn_record(t_year: int = 170, till_year=2015, var: str = "PRCP") -> set:
     https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt
 
     """
-    file_path = "heva/aux_data/ghcn/ghcnd-inventory.txt"
+    file_path = "heva/aux_files/ghcnd-inventory.txt"
 
     with open(file_path) as f:
 
-        set_station = set()
+        station_dict = dict()
         for line in f:
             end_year = int(line[41:45])
             start_year = int(line[36:40])
@@ -81,8 +83,11 @@ def ghcn_record(t_year: int = 170, till_year=2015, var: str = "PRCP") -> set:
                 (record_length > t_year)
                 and (variable == var)
                 and (end_year > till_year)
+                and (from_year > start_year)
             ):
-                set_station.add(line[0:11])
+                station_dict[line[0:11]] = [record_length, start_year, end_year]
 
-        set_station = sorted(set_station)
-    return set_station
+        sorted_station_dict = sorted(
+            station_dict.items(), key=lambda v: v[1][0], reverse=False
+        )
+    return sorted_station_dict
