@@ -4,8 +4,7 @@ from heva.utils.dist import _Distribution
 from heva.utils.helper import _convert_np
 import scipy.optimize
 import matplotlib.pylab as plt
-
-# from numdifftools import Hessian
+from numdifftools import Hessian
 from scipy import linalg
 
 
@@ -18,7 +17,8 @@ class GEVDist(_Distribution):
         "mu",
         "sigma",
         "xi",
-        "cov",
+        "x",
+        "cov_mat" "cov",
         "mu_cov",
         "unit",
         "time_scale",
@@ -27,7 +27,9 @@ class GEVDist(_Distribution):
         "xi_p",
     )
 
-    def __init__(self, mu_p, sigma_p, xi_p, cov, mu_cov=1, unit=None, time_scale=None):
+    def __init__(
+        self, mu_p, sigma_p, xi_p, x, cov_mat, mu_cov=1, unit=None, time_scale=None
+    ):
         """
         mu, sigma and xi parameters are used to initialise a GEV Distribution
 
@@ -38,11 +40,11 @@ class GEVDist(_Distribution):
             cov (numpy.array) : Covriance Matrix of the parameters
         """
         self.mu_p = mu_p
-        self.mu = self._compute_parameter(mu_p, cov)
-        self.sigma = self._compute_parameter(sigma_p, cov)
-        self.xi = self._compute_parameter(xi_p, cov)
-        self.cov = cov
-        self.cov = cov
+        self.mu = self._compute_parameter(mu_p, x)
+        self.sigma = self._compute_parameter(sigma_p, x)
+        self.xi = self._compute_parameter(xi_p, x)
+        self.x = x
+        self.cov_mat = cov_mat
         self.unit = unit
         self.time_scale = time_scale
 
@@ -122,9 +124,10 @@ class GEVDist(_Distribution):
         p = _convert_np(p)
         num_p = p.shape[0]
         grad_rl = self.return_level_gradient(p)
+
         var = np.zeros((num_p, 1))
         for i in range(num_p):
-            _mul = np.matmul(grad_rl[i, :], self.cov)
+            _mul = np.matmul(grad_rl[i, :], self.cov_mat)
             var[i, 0] = np.matmul(_mul, grad_rl[i, :].T)
         return var
 
@@ -162,7 +165,8 @@ class GEV(object):
 
     __slots__ = (
         "max_arr",
-        "covariate",
+        "x",
+        "cov_mat",
         "nmu_cov",
         "nsigma_cov",
         "nxi_cov",
@@ -180,7 +184,8 @@ class GEV(object):
     def __init__(
         self,
         max_arr,
-        covariate=None,
+        x=None,
+        cov_mat=None,
         nmu_cov=0,
         nsigma_cov=0,
         nxi_cov=0,
@@ -192,7 +197,7 @@ class GEV(object):
     ):
 
         self.max_arr = max_arr
-        self.covariate = covariate
+        self.x = x
         self.nmu_cov = nmu_cov
         self.nsigma_cov = nsigma_cov
         self.nxi_cov = nxi_cov
@@ -206,10 +211,13 @@ class GEV(object):
         parameter = self._generate_parameter()
         options = {"maxiter": 10000}
         minimized_nll = scipy.optimize.minimize(
-            fun=self.nll, x0=parameter, method="nelder-mead", hess=True, options=options
+            fun=self.nll, x0=parameter, method=self.method, hess=True, options=options
         )
-        print(minimized_nll.x)
+        hess = Hessian(self.nll, method="complex")
+        hess_matrix = hess(minimized_nll.x)
+        hess_inv = linalg.inv(hess_matrix)
 
+        print(f"The parameter values are {minimized_nll.x}")
         strt_mu = 0
         end_mu = strt_mu + 1 + self.nmu_cov
         strt_sig = end_mu
@@ -222,7 +230,12 @@ class GEV(object):
         self.xi_p = minimized_nll.x[strt_xi:end_xi]
 
         self.dist = GEVDist(
-            self.mu_p, self.sigma_p, self.xi_p, self.covariate, self.nmu_cov
+            mu_p=self.mu_p,
+            sigma_p=self.sigma_p,
+            xi_p=self.xi_p,
+            cov_mat=hess_inv,
+            x=self.x,
+            mu_cov=self.nmu_cov,
         )
         # hess = Hessian(self.nll, method="complex")
 
@@ -278,7 +291,7 @@ class GEV(object):
 
         var = param
         n_cov = param.shape[0]
-        t_step = self.covariate.shape[0]
+        t_step = self.x.shape[0]
 
         if n_cov > 1:
 
@@ -286,7 +299,7 @@ class GEV(object):
             bias = param_mat[:, 0].reshape(t_step, 1)
             weights = param_mat[:, 1:].reshape(t_step, n_cov - 1)
 
-            var_mat = bias + weights * self.covariate[:, 0 : n_cov - 1]
+            var_mat = bias + weights * self.x[:, 0 : n_cov - 1]
             var = var_mat.reshape(t_step, 1)
 
         return var

@@ -29,6 +29,7 @@ def yearly_max(data: np.ndarray, frac: float = 0.9) -> np.ndarray:
                 max_val.append(max(values))
 
             values = []
+
     return np.array([years, max_val]).T
 
 

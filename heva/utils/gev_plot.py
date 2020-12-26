@@ -55,9 +55,7 @@ class GEVPlot(object):
         else:
             dist = "Gumbel (I)\n"
 
-        text = (
-            dist + "$r'\mu'$ : " + mu + "\n$r'\s'igma$ : " + sigma + "\n$\\xi$: " + xi
-        )
+        text = dist + "$\mu$ : " + mu + "\n$\sigma$ : " + sigma + "\n$\\xi$: " + xi
         anchored_text = AnchoredText(text, loc=1)
         ax.add_artist(anchored_text)
         return ax
@@ -176,7 +174,7 @@ class GEVPlot(object):
 
         return ax
 
-    def diag_plot(self):
+    def diag_plot(self, save_path: str):
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10, 8))
 
         ax1 = self._p_ax(ax1)
@@ -185,7 +183,7 @@ class GEVPlot(object):
         ax4 = self._d_ax(ax4)
 
         fig.tight_layout()
-        plt.show()
+        plt.savefig(save_path)
 
     def non_stationary_rl_plot(self, p: float, save_path=None):
         obs = self.obs
