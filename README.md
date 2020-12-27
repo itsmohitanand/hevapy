@@ -36,4 +36,4 @@ A map to show the length of the record for valid years. A valid year is one wher
 Figure 2 : 
 Creating a composite is not a good idea. It can be done manually later
 
-![Non-stationary GEV Plot](readme_plot/ns.png)
+![Non-stationary GEV Plot](readme_plots/ns.png)
