@@ -20,7 +20,7 @@ This is where the data can be downloaded
 [GHCN](https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/)
 
 Some plots for fun.
-![Stationary GEV Plot](readme_plot/s.png)
+![Stationary GEV Plot](readme_plots/s.png)
 
 ### Some Todo's in terms of the figure 
 
@@ -31,9 +31,9 @@ Some plots for fun.
 
 Figure 1 : 
 A map to show the length of the record for valid years. A valid year is one where there is data for 90% (329) or more number of days  in a year. 
-[Record Length for 6 custom station](readme_plots/record_length.png)
+![Record Length for 6 custom station](readme_plots/record_length.png)
 
 Figure 2 : 
 Creating a composite is not a good idea. It can be done manually later
 
-[Non-stationary GEV Plot](readme_plot/ns.png)
+![Non-stationary GEV Plot](readme_plot/ns.png)
