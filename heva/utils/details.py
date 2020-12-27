@@ -10,7 +10,7 @@ def ghcn_stn_info(stn_id: str) -> Tuple:
     Returns:
         Tuple : Tuple containg three elements (Cordinates(x,y), elevation, name)
     """
-    file_path = "heva/aux_data/ghcn/ghcnd-stations.txt"
+    file_path = "heva/aux_files/ghcnd-stations.txt"
     stn_info = []
     for id in stn_id:
         with open(file_path) as f:
@@ -38,7 +38,7 @@ def ghcn_key_map():
     Returns:
         Dict : A dictionary of country keys and country
     """
-    file_path = "heva/aux_data/ghcn/ghcnd-countries.txt"
+    file_path = "heva/aux_files/ghcnd-countries.txt"
     c_key_map = dict()
     with open(file_path) as f:
         for line in f:
@@ -47,9 +47,7 @@ def ghcn_key_map():
     return c_key_map
 
 
-def ghcn_record(
-    t_year: int = 75, till_year=2015, from_year=1900, var: str = "PRCP"
-) -> dict:
+def ghcn_record(req_length: int = 75, till_year=2015, var: str = "PRCP") -> dict:
     """
     Provides the station name with the length of record greater than a threshold, given for a variable. The five core elements as variables are:
     PRCP = Precipitation (tenths of mm)
@@ -75,19 +73,23 @@ def ghcn_record(
 
         station_dict = dict()
         for line in f:
+            lat = float(line[12:20])
+            lon = float(line[21:30])
             end_year = int(line[41:45])
             start_year = int(line[36:40])
             record_length = end_year - start_year
             variable = line[31:35]
             if (
-                (record_length > t_year)
+                (record_length > req_length)
                 and (variable == var)
-                and (end_year > till_year)
-                and (from_year > start_year)
+                and (end_year >= till_year)
             ):
-                station_dict[line[0:11]] = [record_length, start_year, end_year]
+                station_dict[line[0:11]] = [
+                    record_length,
+                    start_year,
+                    end_year,
+                    lat,
+                    lon,
+                ]
 
-        sorted_station_dict = sorted(
-            station_dict.items(), key=lambda v: v[1][0], reverse=False
-        )
-    return sorted_station_dict
+    return station_dict

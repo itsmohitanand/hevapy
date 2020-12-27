@@ -1,8 +1,7 @@
-import pandas as pd
 from heva import ghcn_record
 import matplotlib.pylab as plt
 
-sorted_dict_station = ghcn_record(t_year=75, from_year=1940)
+sorted_dict_station = ghcn_record(req_len=75, till_year=1940)
 print(len(sorted_dict_station))
 
 # fig , ax = plt.subplots(1,1, figsize=(5,20))

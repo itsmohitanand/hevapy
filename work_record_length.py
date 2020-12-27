@@ -21,5 +21,4 @@ for each_station in station_list:
     max_val = yearly_max(data_station)
     dict_max_val[each_station] = max_val
 
-
 record_length_plot(dict_max_val, "readme_plots/record_length.png")
