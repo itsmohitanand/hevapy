@@ -17,7 +17,7 @@ class GEVDist(_Distribution):
         "mu",
         "sigma",
         "xi",
-        "x",
+        "covariate",
         "cov_mat" "cov",
         "mu_cov",
         "unit",
@@ -28,7 +28,15 @@ class GEVDist(_Distribution):
     )
 
     def __init__(
-        self, mu_p, sigma_p, xi_p, x, cov_mat, mu_cov=1, unit=None, time_scale=None
+        self,
+        mu_p,
+        sigma_p,
+        xi_p,
+        covariate,
+        cov_mat,
+        mu_cov=1,
+        unit=None,
+        time_scale=None,
     ):
         """
         mu, sigma and xi parameters are used to initialise a GEV Distribution
@@ -40,10 +48,10 @@ class GEVDist(_Distribution):
             cov (numpy.array) : Covriance Matrix of the parameters
         """
         self.mu_p = mu_p
-        self.mu = self._compute_parameter(mu_p, x)
-        self.sigma = self._compute_parameter(sigma_p, x)
-        self.xi = self._compute_parameter(xi_p, x)
-        self.x = x
+        self.mu = self._compute_parameter(mu_p, covariate)
+        self.sigma = self._compute_parameter(sigma_p, covariate)
+        self.xi = self._compute_parameter(xi_p, covariate)
+        self.covariate = covariate
         self.cov_mat = cov_mat
         self.unit = unit
         self.time_scale = time_scale
@@ -57,27 +65,51 @@ class GEVDist(_Distribution):
     def shape(self):
         return self.xi
 
-    def cdf(self, x):
+    def cdf(self, x, **kwargs):
+
+        if "mu" in kwargs.keys():
+            mu = kwargs["mu"]
+        else:
+            mu = self.mu
+        if "sigma" in kwargs.keys():
+            sigma = kwargs["sigma"]
+        else:
+            sigma = self.sigma
+        if "xi" in kwargs.keys():
+            xi = kwargs["xi"]
+        else:
+            xi = self.xi
 
         x = _convert_np(x)
-        s = np.divide(x - self.mu, self.sigma)
+        s = np.divide(x - mu, sigma)
 
-        if self.xi != 0:
-            return np.exp(
-                -np.power(1 + np.multiply(self.xi, s), np.divide(-1, self.xi))
-            )
+        if xi != 0:
+            return np.exp(-np.power(1 + np.multiply(xi, s), np.divide(-1, xi)))
         else:
             return np.exp(-np.exp(-s))
 
-    def pdf(self, x):
+    def pdf(self, x, **kwargs):
+
+        if "mu" in kwargs.keys():
+            mu = kwargs["mu"]
+        else:
+            mu = self.mu
+        if "sigma" in kwargs.keys():
+            sigma = kwargs["sigma"]
+        else:
+            sigma = self.sigma
+        if "xi" in kwargs.keys():
+            xi = kwargs["xi"]
+        else:
+            xi = self.xi
 
         x = _convert_np(x)
-        s = np.divide(x - self.mu, self.sigma)
+        s = np.divide(x - mu, sigma)
 
-        if self.xi != 0:
+        if xi != 0:
             ## Equation broken down for clarity
-            a = np.power(1 + np.multiply(self.xi, s), -1 * (np.divide(1, self.xi) + 1))
-            pdf = np.divide(np.multiply(a, self.cdf(x)), self.sigma)
+            a = np.power(1 + np.multiply(xi, s), -1 * (np.divide(1, xi) + 1))
+            pdf = np.divide(np.multiply(a, self.cdf(x, mu=mu)), sigma)
             return pdf
         else:
             return np.multiply(np.exp(-s), self.cdf(x))
@@ -165,7 +197,7 @@ class GEV(object):
 
     __slots__ = (
         "max_arr",
-        "x",
+        "covariate",
         "cov_mat",
         "nmu_cov",
         "nsigma_cov",
@@ -184,7 +216,7 @@ class GEV(object):
     def __init__(
         self,
         max_arr,
-        x=None,
+        covariate=None,
         cov_mat=None,
         nmu_cov=0,
         nsigma_cov=0,
@@ -197,7 +229,7 @@ class GEV(object):
     ):
 
         self.max_arr = max_arr
-        self.x = x
+        self.covariate = covariate
         self.nmu_cov = nmu_cov
         self.nsigma_cov = nsigma_cov
         self.nxi_cov = nxi_cov
@@ -211,7 +243,7 @@ class GEV(object):
         parameter = self._generate_parameter()
         options = {"maxiter": 10000}
         minimized_nll = scipy.optimize.minimize(
-            fun=self.nll, x0=parameter, method=self.method, hess=True, options=options
+            fun=self.nll, x0=parameter, method=self.method, options=options
         )
         hess = Hessian(self.nll, method="complex")
         hess_matrix = hess(minimized_nll.x)
@@ -234,7 +266,7 @@ class GEV(object):
             sigma_p=self.sigma_p,
             xi_p=self.xi_p,
             cov_mat=hess_inv,
-            x=self.x,
+            covariate=self.covariate,
             mu_cov=self.nmu_cov,
         )
         # hess = Hessian(self.nll, method="complex")
@@ -291,7 +323,7 @@ class GEV(object):
 
         var = param
         n_cov = param.shape[0]
-        t_step = self.x.shape[0]
+        t_step = self.covariate.shape[0]
 
         if n_cov > 1:
 
@@ -299,7 +331,7 @@ class GEV(object):
             bias = param_mat[:, 0].reshape(t_step, 1)
             weights = param_mat[:, 1:].reshape(t_step, n_cov - 1)
 
-            var_mat = bias + weights * self.x[:, 0 : n_cov - 1]
+            var_mat = bias + weights * self.covariate[:, 0 : n_cov - 1]
             var = var_mat.reshape(t_step, 1)
 
         return var
@@ -315,6 +347,6 @@ class GEV(object):
         elif param_str == "xi":
             strt_ind = self.nmu_cov + self.nsigma_cov + 2
             end_ind = strt_ind + self.nxi_cov + 1
-        index_list = [x for x in range(strt_ind, end_ind)]
+        index_list = [p_index for p_index in range(strt_ind, end_ind)]
 
         return index_list

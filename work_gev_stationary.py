@@ -17,4 +17,4 @@ gev = GEV(max_arr, x)
 gev.fit()
 
 gev_plot = GEVPlot(max_arr, x, gev.dist)
-gev_plot.diag_plot("read_me_plot/uk_diag.png")
+gev_plot.diag_plot("readme_plots/s.png")

@@ -1,6 +1,7 @@
 from typing import List
 import matplotlib.pylab as plt
 from matplotlib.lines import Line2D
+import numpy as np
 
 
 def record_length_plot(dict_max_val: dict, save_path: str) -> bool:
@@ -17,8 +18,9 @@ def record_length_plot(dict_max_val: dict, save_path: str) -> bool:
     fig, ax = plt.subplots(1, 1, figsize=(8, 4))
 
     y = 1
-
+    key_list = []
     for key, val in dict_max_val.items():
+        key_list.append(key)
         strt_year = val[0, 0]
         for i in range(1, val.shape[0] - 1):
             if val[i + 1, 0] != 1 + val[i, 0]:
@@ -46,6 +48,10 @@ def record_length_plot(dict_max_val: dict, save_path: str) -> bool:
         ncol=3,
         shadow=True,
     )
+    y_pos = np.arange(1, len(key_list) + 1)
+    ax.set_yticklabels(key_list)
+
+    ax.set_yticks(y_pos)
     ax.grid(axis="x", linestyle="--")
     plt.tight_layout()
     plt.savefig(save_path)

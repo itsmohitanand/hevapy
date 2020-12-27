@@ -1,6 +1,6 @@
 import numpy as np
 from heva.utils.helper import _convert_np
-
+from typing import Tuple
 import matplotlib.pylab as plt
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.markers import MarkerStyle
@@ -35,10 +35,12 @@ class GEVPlot(object):
 
         ax.plot(x, y, color=self.c1, linewidth=1.5)
         ax.hist(obs, density=True, bins=bins, edgecolor=self.c2, color=self.c3)
+
         xlabel = "Z"
+        ylabel = "pdf(Z)"
+
         if GEV.unit is not None and GEV.time_scale is not None:
             xlabel = xlabel + " : " + GEV.time_scale + " " + GEV.unit
-        ylabel = "pdf(Z)"
         ax.set_title("Density Plot")
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
@@ -185,23 +187,34 @@ class GEVPlot(object):
         fig.tight_layout()
         plt.savefig(save_path)
 
-    def non_stationary_rl_plot(self, p: float, save_path=None):
+    def non_stationary_plot(self, save_path: str):
+        fig, ((ax1, ax2)) = plt.subplots(1, 2, figsize=(12, 4))
+        ax1 = self._ns_ts(ax1)
+        ax2 = self._ns_density(ax2)
+
+        plt.tight_layout()
+
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
+
+    def _ns_ts(self, ax: type(plt.axes)) -> type(plt.axes):
         obs = self.obs
         GEV = self.dist
         x = self.x
-
-        fig, ax = plt.subplots(1, 1)
-
-        mu = GEV.mu
+        p = [0.05]
         mu_p = GEV.mu_p
+
         rl = GEV.return_level(p)
 
         del_rl = np.round(rl[-1] - rl[0], 2)[0]
         slope = np.round(mu_p[1], 3)
-        ax.plot(x, mu, color=self.c1)
-        ax.plot(x, obs, marker="*", color=self.c2)
+        # ax.plot(x, mu, color=self.c1)
+        ax.plot(x, obs, marker="*", color=self.c2, label="observation")
         ax.plot(x, obs, color=self.c3)
-        ax.plot(x, rl, color="red")
+        ax.plot(x, rl, color=self.c1, label="20 Yr Return Level")
 
         text = (
             "$\Delta$RL (p = "
@@ -213,8 +226,53 @@ class GEVPlot(object):
         )
         anchored_text = AnchoredText(text, loc=1)
         ax.add_artist(anchored_text)
-        if save_path:
-            plt.savefig(save_path)
-            plt.close()
-        else:
-            plt.show()
+        ax.legend()
+
+        xlabel = "Covariate"
+        ylabel = "Max Val"
+
+        if GEV.unit is not None and GEV.time_scale is not None:
+            xlabel = xlabel + " : " + GEV.time_scale + " " + GEV.unit
+        ax.set_title("Time Series")
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        return ax
+
+    def _ns_density_data(self) -> Tuple:
+
+        obs = self.obs
+        GEV = self.dist
+        x = [x for x in range(int(min(obs)), int(max(obs)))]
+        y1 = GEV.pdf(x, mu=GEV.mu[0])
+        y2 = GEV.pdf(x, mu=GEV.mu[-1])
+
+        t1 = self.x[0]
+        t2 = self.x[-1]
+
+        return (x, (t1, y1), (t2, y2))
+
+    def _ns_density(self, ax: type(plt.axes)) -> type(plt.axes):
+
+        GEV = self.dist
+
+        (x, (t1, y1), (t2, y2)) = self._ns_density_data()
+
+        ax.plot(x, y1)
+        ax.fill_between(
+            x, 0, y1[:, 0], color=self.c3, alpha=0.8, label="year : " + str(int(t1[0]))
+        )
+        ax.plot(x, y2)
+        ax.fill_between(
+            x, 0, y2[:, 0], color=self.c1, alpha=0.5, label="year : " + str(int(t2[0]))
+        )
+        ax.legend()
+        xlabel = "Z"
+        ylabel = "pdf(Z)"
+
+        if GEV.unit is not None and GEV.time_scale is not None:
+            xlabel = xlabel + " : " + GEV.time_scale + " " + GEV.unit
+        ax.set_title("Density Plot")
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+
+        return ax
