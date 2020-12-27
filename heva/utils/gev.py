@@ -8,53 +8,57 @@ from numdifftools import Hessian
 from scipy import linalg
 
 
-class GEVDist(_Distribution):
-    """
-    GEV class inherits from a _Distribution class and implements methods like loc, scale, shape, cdf and pdf.
-    """
+class GEV(_Distribution):
 
     __slots__ = (
+        "max_arr",
+        "covariate",
+        "cov_mat",
+        "nmu_cov",
+        "nsigma_cov",
+        "nxi_cov",
+        "method",
+        "max_it",
         "mu",
         "sigma",
         "xi",
-        "covariate",
-        "cov_mat" "cov",
-        "mu_cov",
-        "unit",
-        "time_scale",
         "mu_p",
         "sigma_p",
         "xi_p",
+        "unit",
+        "time_scale",
+        "cov_mat",
     )
 
     def __init__(
         self,
-        mu_p,
-        sigma_p,
-        xi_p,
-        covariate,
-        cov_mat,
-        mu_cov=1,
-        unit=None,
+        max_arr,
+        covariate=None,
+        cov_mat=None,
+        nmu_cov=0,
+        nsigma_cov=0,
+        nxi_cov=0,
+        mu=0,
+        sigma=1,
+        xi=0,
+        method="Nelder-Mead",
+        max_it=10000,
         time_scale=None,
+        unit=None,
     ):
-        """
-        mu, sigma and xi parameters are used to initialise a GEV Distribution
 
-        Args:
-            mu (numpy.array) : Location parameter of the distribution
-            sigma (numpy.array) : Scale parameter of the distribution
-            xi (numpy.array) : Shape parameter of the distribution
-            cov (numpy.array) : Covriance Matrix of the parameters
-        """
-        self.mu_p = mu_p
-        self.mu = self._compute_parameter(mu_p, covariate)
-        self.sigma = self._compute_parameter(sigma_p, covariate)
-        self.xi = self._compute_parameter(xi_p, covariate)
+        self.max_arr = max_arr
         self.covariate = covariate
-        self.cov_mat = cov_mat
-        self.unit = unit
+        self.nmu_cov = nmu_cov
+        self.nsigma_cov = nsigma_cov
+        self.nxi_cov = nxi_cov
+        self.method = method
+        self.max_it = max_it
+        self.mu = mu
+        self.sigma = sigma
+        self.xi = xi
         self.time_scale = time_scale
+        self.unit = unit
 
     def loc(self):
         return self.mu
@@ -179,7 +183,8 @@ class GEVDist(_Distribution):
         self.time_scale = time_scale
         return True
 
-    def _compute_parameter(self, p_para, covariate):
+    def _compute_parameter(self, p_para):
+        covariate = self.covariate
         cov_order = len(p_para)
         if cov_order > 1:
             para = np.zeros((covariate.shape[0], 1))
@@ -191,53 +196,6 @@ class GEVDist(_Distribution):
         else:
             para = p_para
         return para
-
-
-class GEV(object):
-
-    __slots__ = (
-        "max_arr",
-        "covariate",
-        "cov_mat",
-        "nmu_cov",
-        "nsigma_cov",
-        "nxi_cov",
-        "mu_init",
-        "sigma_init",
-        "xi_init",
-        "method",
-        "max_it",
-        "mu_p",
-        "sigma_p",
-        "xi_p",
-        "dist",
-    )
-
-    def __init__(
-        self,
-        max_arr,
-        covariate=None,
-        cov_mat=None,
-        nmu_cov=0,
-        nsigma_cov=0,
-        nxi_cov=0,
-        mu_init=None,
-        sigma_init=None,
-        xi_init=None,
-        method="Nelder-Mead",
-        max_it=10000,
-    ):
-
-        self.max_arr = max_arr
-        self.covariate = covariate
-        self.nmu_cov = nmu_cov
-        self.nsigma_cov = nsigma_cov
-        self.nxi_cov = nxi_cov
-        self.mu_init = mu_init
-        self.sigma_init = sigma_init
-        self.xi_init = xi_init
-        self.method = method
-        self.max_it = max_it
 
     def fit(self):
         parameter = self._generate_parameter()
@@ -261,18 +219,9 @@ class GEV(object):
         self.sigma_p = minimized_nll.x[strt_sig:end_sig]
         self.xi_p = minimized_nll.x[strt_xi:end_xi]
 
-        self.dist = GEVDist(
-            mu_p=self.mu_p,
-            sigma_p=self.sigma_p,
-            xi_p=self.xi_p,
-            cov_mat=hess_inv,
-            covariate=self.covariate,
-            mu_cov=self.nmu_cov,
-        )
-        # hess = Hessian(self.nll, method="complex")
+        self.cov_mat = hess_inv
 
-        # hess_matrix = hess(minimized_nll.x)
-        # print(linalg.inv(hess_matrix))
+        self._recompute_param()
 
     def nll(self, parameters):
 
@@ -350,3 +299,8 @@ class GEV(object):
         index_list = [p_index for p_index in range(strt_ind, end_ind)]
 
         return index_list
+
+    def _recompute_param(self):
+        self.mu = self._compute_parameter(self.mu_p)
+        self.sigma = self._compute_parameter(self.sigma_p)
+        self.xi = self._compute_parameter(self.xi_p)

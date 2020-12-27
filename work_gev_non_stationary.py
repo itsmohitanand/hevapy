@@ -9,9 +9,9 @@ max_val = yearly_max(data)
 x = max_val[:, 0].reshape(max_val.shape[0], 1)
 max_arr = max_val[:, 1].reshape(max_val.shape[0], 1) / 10.0
 
-dist = GEV(max_arr, x, nmu_cov=1)
+gev = GEV(max_arr, x, nmu_cov=1)
 
-dist.fit()
+gev.fit()
 
-plot = GEVPlot(max_arr, x, dist.dist)
+plot = GEVPlot(max_arr, x, gev)
 plot.non_stationary_plot("readme_plots/ns.png")
