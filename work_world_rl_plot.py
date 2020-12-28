@@ -34,9 +34,16 @@ lon_list = list(rl_mat[:, 5])
 
 del_rl_list = list(del_rl)
 
-save_path_delrl = "plots/del_rl_mean.png"
-cart_plot = CartPlot()
-# cart_plot.plot_stations(lat_list, lon_list, save_path)
-cart_plot.p_color_mesh(
-    lat_list, lon_list, del_rl_list, "mean", save_path=save_path_delrl
-)
+plt.hist(del_rl_list, bins=100)
+plt.savefig("readme_plots/hist_change_rl.png")
+
+
+# stat = 'max'
+
+# save_path_delrl = 'readme_plots/del_rl_'+stat+'.png'
+# save_path_location = "readme_plots/loc.png"
+# cart_plot = CartPlot()
+# cart_plot.plot_stations(lat_list, lon_list, save_path_location)
+# cart_plot.p_color_mesh(
+#     lat_list, lon_list, del_rl_list, stat, save_path=save_path_delrl
+# )

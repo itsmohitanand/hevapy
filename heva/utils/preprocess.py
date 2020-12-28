@@ -30,7 +30,7 @@ def yearly_max(data: np.ndarray, frac: float = 0.9) -> np.ndarray:
 
             values = []
 
-    return np.array([years, max_val]).T
+    return np.transpose(np.array([years, max_val]))
 
 
 def _day_first(x):

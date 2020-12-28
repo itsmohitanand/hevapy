@@ -41,7 +41,7 @@ with open("data/rl_1965_2015.csv", "w+") as f:
                     gev = GEV(max_arr=max_arr, covariate=covariate, nmu_cov=1)
                     try:
                         gev.fit()
-                        rl = gev.dist.return_level(p)
+                        rl = gev.return_level(p)
                         counter += 1
                         rl_dict[key] = [covariate[0], rl[0], covariate[-1], rl[-1]]
                         f.write(
