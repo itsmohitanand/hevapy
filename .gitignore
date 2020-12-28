@@ -141,8 +141,8 @@ plots
 
 ## Remove .DS_Store
 
-/DS_Store
-DS_Store/
+/.DS_Store
+.DS_Store/
 
 ## Don't upload data on github
 
