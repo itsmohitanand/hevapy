@@ -20,6 +20,8 @@ This is where the data can be downloaded
 [GHCN](https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/)
 
 Some plots for fun.
+
+##### Stationary GEV Plot
 ![Stationary GEV Plot](readme_plots/s.png)
 
 ### Some Planned Todo's in terms of the figure 
@@ -29,11 +31,11 @@ Some plots for fun.
 - [X]  Figure 3: Composite world map, 50yr return level in start and end year
 - [ ]  Figure 4: Composite world map, magnitude of event for 50 year return level event in start year, evaluate the the new return level (end year) of the same event, A map for change in years for return levels
 
-##### Plot 1 : 
+##### Plot 1 : Record Length for 6 custom station
 A map to show the length of the record for valid years. A valid year is one where there is data for 90% (329) or more number of days  in a year. 
 ![Record Length for 6 custom station](readme_plots/record_length.png)
 
-##### Plot 2 : 
+##### Plot 2 : Non-stationary GEV Plot
 Creating a composite is not a good idea. It can be done manually later
 
 The plot below shows 2 figure. 
@@ -49,7 +51,7 @@ The plot below shows 2 figure.
 - 
 ![Non-stationary GEV Plot](readme_plots/ns.png)
 
-##### Plot 3 :
+##### Plot 3 : Station Location
 The figure below shows the location of stations for which further analysis is made
 - The period chosen was from 1965-2015
 - There are total 3300 stations with all the valid years between 1965-2015
@@ -57,7 +59,7 @@ The figure below shows the location of stations for which further analysis is ma
 
 ![Station Location](readme_plots/loc.png)
 
-##### Plot 4 : 
+##### Plot 4 : Change in return level from 1965-2015
 
 This plot shows the how the 50 year return level changed from 1965-2015. 
 - As mentioned earlier, this will be same as 20, 30, 40 or any n year return level change. (This is my understanding)
@@ -68,7 +70,7 @@ This plot shows the how the 50 year return level changed from 1965-2015.
 
 ![Change in return level from 1965-2015](readme_plots/rl_change_1965_2015_mean.png)
 
-##### Additional Figure
+##### Additional Figure : Histogram of Change in Return Level from 1965-2015
 
 This just gives an idea on how the change in (50 yr) return level is distributed
 - Change in rl again is in mm/day
