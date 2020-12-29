@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Tuple, List
-from heva.utils.dist import _Distribution
-from heva.utils.helper import _convert_np
+from heva.dist import _Distribution
+from heva.helper import _convert_2d_np
 import scipy.optimize
 import matplotlib.pylab as plt
 from numdifftools import Hessian
@@ -84,7 +84,7 @@ class GEV(_Distribution):
         else:
             xi = self.xi
 
-        x = _convert_np(x)
+        x = _convert_2d_np(x)
         s = np.divide(x - mu, sigma)
 
         if xi != 0:
@@ -107,7 +107,7 @@ class GEV(_Distribution):
         else:
             xi = self.xi
 
-        x = _convert_np(x)
+        x = _convert_2d_np(x)
         s = np.divide(x - mu, sigma)
 
         if xi != 0:
@@ -123,7 +123,7 @@ class GEV(_Distribution):
         GEV Return level equation Coles pg 67 eq 3.10
         1/p return level
         """
-        p = _convert_np(p)
+        p = _convert_2d_np(p)
         yp = -np.log(1 - p)
         if self.xi != 0:
             log_term = np.power(yp, -self.xi)
@@ -140,7 +140,7 @@ class GEV(_Distribution):
             np.ndarray : Gradient transpose is returned here.
 
         """
-        p = _convert_np(p)
+        p = _convert_2d_np(p)
         num_p = p.shape[0]
 
         eps = 0
@@ -157,7 +157,7 @@ class GEV(_Distribution):
         return grad
 
     def return_level_var(self, p):
-        p = _convert_np(p)
+        p = _convert_2d_np(p)
         num_p = p.shape[0]
         grad_rl = self.return_level_gradient(p)
 

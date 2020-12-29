@@ -1,5 +1,5 @@
 import numpy as np
-from heva.utils.helper import _convert_np
+from heva.helper import _convert_2d_np
 from typing import Tuple
 import matplotlib.pylab as plt
 from matplotlib.offsetbox import AnchoredText
@@ -65,7 +65,7 @@ class GEVPlot(object):
     def _q_data(self):
         GEV = self.dist
         obs = self.obs
-        obs = _convert_np(obs)
+        obs = _convert_2d_np(obs)
         obs = np.sort(obs, axis=0)
         r = [1 - x / (obs.shape[0] + 1) for x in range(1, obs.shape[0] + 1)]
         sim = GEV.return_level(r)
@@ -97,7 +97,7 @@ class GEVPlot(object):
         GEV = self.dist
         obs = self.obs
 
-        obs = _convert_np(obs)
+        obs = _convert_2d_np(obs)
         obs = np.sort(obs, axis=0)
 
         t_emp = np.arange(1, obs.shape[0] + 1).reshape(obs.shape[0], 1)
