@@ -1,73 +1,76 @@
 appdirs==1.4.4
-astroid @ file:///opt/concourse/worker/volumes/live/21fd14a9-2a7e-484b-7394-5a9912cdcf80/volume/astroid_1592498459180/work
-attrs @ file:///tmp/build/80754af9/attrs_1604765588209/work
+astroid==2.4.2
+attrs==20.3.0
 black==19.10b0
 bleach==3.2.1
 brotlipy==0.7.0
-Cartopy @ file:///Users/runner/miniforge3/conda-bld/cartopy_1607027743012/work
+Cartopy==0.18.0
 certifi==2020.12.5
-cffi @ file:///opt/concourse/worker/volumes/live/730e9a28-66f9-4e03-51ad-252ec8e40d81/volume/cffi_1606255126408/work
-cfgv @ file:///home/conda/feedstock_root/build_artifacts/cfgv_1596220740692/work
-chardet @ file:///opt/concourse/worker/volumes/live/c798b2ee-88b1-4341-6830-161a92c2399e/volume/chardet_1607706832595/work
+cffi==1.14.4
+cfgv==3.2.0
+chardet==4.0.0
 click==7.1.2
 colorama==0.4.4
-cryptography @ file:///opt/concourse/worker/volumes/live/27753773-e292-4a76-405d-313f3647b99f/volume/cryptography_1607636767414/work
+cryptography==3.3.1
 cycler==0.10.0
-distlib @ file:///opt/concourse/worker/volumes/live/2b7d7903-f212-4bce-48db-f963c4d1c6e9/volume/distlib_1600715936463/work
+distlib==0.3.1
 docutils==0.16
-editdistance @ file:///opt/concourse/worker/volumes/live/7d1fa1ee-ff7e-4730-5fa5-b078cfdf51af/volume/editdistance_1605215828561/work
+editdistance==0.5.3
 filelock==3.0.12
-flake8 @ file:///tmp/build/80754af9/flake8_1601911421857/work
-flake8-black @ file:///home/conda/feedstock_root/build_artifacts/flake8-black_1595694611041/work
-identify @ file:///home/conda/feedstock_root/build_artifacts/identify_1606108161487/work
-idna @ file:///tmp/build/80754af9/idna_1593446292537/work
-importlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1602276842396/work
-isort @ file:///tmp/build/80754af9/isort_1602603989581/work
+flake8==3.8.4
+flake8-black==0.2.1
+identify==1.5.10
+idna==2.10
+importlib-metadata==2.0.0
+isort==5.6.4
 keyring==21.7.0
-kiwisolver @ file:///opt/concourse/worker/volumes/live/b8936fa6-0e4b-47e7-4fb4-e02dbd4505ee/volume/kiwisolver_1604014598721/work
-lazy-object-proxy @ file:///opt/concourse/worker/volumes/live/4edac9a2-4df2-4a26-4521-3cf6eec3d38c/volume/lazy-object-proxy_1607707342845/work
-matplotlib @ file:///opt/concourse/worker/volumes/live/f7797860-f8aa-410c-4a56-72315954816b/volume/matplotlib-base_1603378002957/work
+kiwisolver==1.3.0
+lazy-object-proxy==1.4.3
+matplotlib==3.3.2
 mccabe==0.6.1
 mkl-fft==1.2.0
 mkl-random==1.1.1
 mkl-service==2.3.0
 mypy-extensions==0.4.3
-nodeenv @ file:///home/conda/feedstock_root/build_artifacts/nodeenv_1598272176291/work
+nodeenv==1.5.0
 numdifftools==0.9.39
-numpy @ file:///opt/concourse/worker/volumes/live/5572694e-967a-4c0c-52cf-b53d43e72de9/volume/numpy_and_numpy_base_1603491881791/work
+numpy==1.19.2
 olefile==0.46
 packaging==20.8
 pathspec==0.7.0
-Pillow @ file:///opt/concourse/worker/volumes/live/991b9a87-3372-4acd-45f9-eaa52701f03c/volume/pillow_1603822262543/work
+Pillow==8.0.1
+pip==20.3.3
 pkginfo==1.6.1
-pre-commit @ file:///Users/runner/miniforge3/conda-bld/pre-commit_1607390785103/work
+pre-commit==2.9.3
 pycodestyle==2.6.0
-pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
+pycparser==2.20
 pyflakes==2.2.0
 Pygments==2.7.3
-pylint @ file:///opt/concourse/worker/volumes/live/ed0164b6-bcc7-4f6b-7dd4-ad89660b5dcb/volume/pylint_1598624018129/work
-pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1608057966937/work
+pylint==2.6.0
+pyOpenSSL==20.0.1
 pyparsing==2.4.7
-pyshp @ file:///tmp/build/80754af9/pyshp_1600141782871/work
-PySocks @ file:///opt/concourse/worker/volumes/live/85a5b906-0e08-41d9-6f59-084cee4e9492/volume/pysocks_1594394636991/work
+pyshp==2.1.2
+PySocks==1.7.1
 python-dateutil==2.8.1
 PyYAML==5.3.1
 readme-renderer==28.0
-regex @ file:///opt/concourse/worker/volumes/live/c84a6349-3315-46e4-634b-b5582dea058b/volume/regex_1606691109605/work
-requests @ file:///tmp/build/80754af9/requests_1608241421344/work
+regex==2020.11.13
+requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
-scipy @ file:///opt/concourse/worker/volumes/live/851446f6-a052-41c4-4243-67bb78999b49/volume/scipy_1604596178167/work
-Shapely @ file:///Users/runner/miniforge3/conda-bld/shapely_1602548034434/work
-six @ file:///opt/concourse/worker/volumes/live/5b31cb27-1e37-4ca5-6e9f-86246eb206d2/volume/six_1605205320872/work
-toml @ file:///tmp/build/80754af9/toml_1592853716807/work
-tornado @ file:///opt/concourse/worker/volumes/live/05341796-4198-4ded-4a9a-332fde3cdfd1/volume/tornado_1606942323372/work
+scipy==1.5.2
+setuptools==51.1.1
+Shapely==1.7.1
+six==1.15.0
+toml==0.10.1
+tornado==6.1
 tqdm==4.55.0
 twine==3.3.0
 typed-ast==1.4.1
-typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1598376058250/work
-urllib3 @ file:///tmp/build/80754af9/urllib3_1606938623459/work
-virtualenv @ file:///opt/concourse/worker/volumes/live/502522c6-8df4-4b58-6fdf-c86eb996f9b4/volume/virtualenv_1607370070213/work
+typing-extensions==3.7.4.3
+urllib3==1.26.2
+virtualenv==20.2.2
 webencodings==0.5.1
-wrapt @ file:///opt/concourse/worker/volumes/live/4fd63656-ef78-4d7f-42f4-6ab83f3ac507/volume/wrapt_1607712512486/work
-zipp @ file:///tmp/build/80754af9/zipp_1604001098328/work
+wheel==0.36.2
+wrapt==1.11.2
+zipp==3.4.0
