@@ -1,12 +1,12 @@
 import unittest
 import numpy as np
-from hevapy.helper import _convert_2d_np
+import hevapy as hp
 
 
 class TestHelper(unittest.TestCase):
     def test(self):
 
-        fun = _convert_2d_np
+        fun = hp.helper._convert_2d_np
         set_val = self.set_val()
         get_val = self.get_val()
 
