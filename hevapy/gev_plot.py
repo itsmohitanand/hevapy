@@ -1,5 +1,5 @@
 import numpy as np
-from heva.helper import _convert_2d_np
+from hevapy.helper import _convert_2d_np
 from typing import Tuple
 import matplotlib.pylab as plt
 from matplotlib.offsetbox import AnchoredText

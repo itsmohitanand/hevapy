@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Tuple, List
-from heva.dist import _Distribution
-from heva.helper import _convert_2d_np
+from hevapy.dist import _Distribution
+from hevapy.helper import _convert_2d_np
 import scipy.optimize
 import matplotlib.pylab as plt
 from numdifftools import Hessian
