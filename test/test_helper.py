@@ -2,11 +2,9 @@ import unittest
 import numpy as np
 
 import hevapy
-import hevapy.hevapy
-from hevapy.helper import *
-
 
 print(hevapy)
+print(hevapy.helper)
 
 
 class TestHelper(unittest.TestCase):
