@@ -11,4 +11,6 @@ dependencies:
   - cartopy
   - flake8-black
   - pre_commit
+  - pip:
+    - numdifftools==0.9.39
 prefix: /opt/miniconda3/envs/HEVAPY38
