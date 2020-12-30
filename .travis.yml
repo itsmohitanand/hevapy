@@ -25,6 +25,6 @@ install:
 
 # command to run tests
 script: # run tests
-  - pytest 
+  - coverage run -m pytest  
 after_success:
   - bash <(curl -s https://codecov.io/bash) # submit coverage
