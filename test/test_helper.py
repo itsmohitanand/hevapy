@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from heva.helper import _convert_2d_np
+from hevapy import _convert_2d_np
 
 
 class TestHelper(unittest.TestCase):
