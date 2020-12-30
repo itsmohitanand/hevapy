@@ -1,0 +1,14 @@
+name: HEVAPY38
+channels:
+  - defaults
+dependencies:
+  - python=3.8
+  - pylint
+  - numpy
+  - requests
+  - scipy
+  - matplotlib
+  - cartopy
+  - flake8-black
+  - pre_commit
+prefix: /opt/miniconda3/envs/HEVAPY38

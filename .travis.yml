@@ -20,8 +20,11 @@ install:
   - conda env create -f env.yml
   - conda activate HEVAPY38
   - python setup.py install
+  - conda install pytest
+  - conda install coverage
 
 # command to run tests
-script: pytest # run tests
+script: # run tests
+  - coverage run -m pytest 
 after_success:
   - codecov # submit coverage
