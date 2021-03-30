@@ -45,7 +45,7 @@ pre-commit==2.9.3
 pycodestyle==2.6.0
 pycparser==2.20
 pyflakes==2.2.0
-Pygments==2.7.3
+Pygments==2.7.4
 pylint==2.6.0
 pyOpenSSL==20.0.1
 pyparsing==2.4.7
