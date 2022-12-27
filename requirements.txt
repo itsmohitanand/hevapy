@@ -59,7 +59,7 @@ requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
 scipy==1.5.2
-setuptools==51.1.1
+setuptools==65.5.1
 Shapely==1.7.1
 six==1.15.0
 toml==0.10.1
